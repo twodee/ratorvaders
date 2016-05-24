@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b8729e54b44b741c1bf9f5d117741cfb
+timeCreated: 1464031726
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - piecePrefab: {fileID: 134030, guid: f92d86d163a614d58972dab24f3f1b97, type: 2}
+  - canvas: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
