@@ -22,6 +22,23 @@ public abstract class Expression {
   }
 
   public abstract GameObject GenerateGameObject();
+
+  virtual public Expression Evaluate() {
+    return this;
+  }
+  
+  virtual public Expression GetHighestPrecedentSubexpression() {
+    return null;
+  }
+
+  virtual public Expression Resolve(Expression toResolve) {
+    return this;
+  }
+
+  virtual public void Relayout(float height, bool isAnimated) {
+  }
+
+  public abstract bool IsLeaf();
 }
 
 /* ------------------------------------------------------------------------- */

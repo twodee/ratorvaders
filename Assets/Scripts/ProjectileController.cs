@@ -23,16 +23,16 @@ public class ProjectileController : MonoBehaviour {
     player.Reload();
   }
 
-  void OnTriggerEnter2D(Collider2D collider) {
+  void OnTriggerStay2D(Collider2D collider) {
     if (collider.CompareTag("Expression")) {
-      Destroy(gameObject);
-      /* Precedence precedence = collider.gameObject.GetComponent<Precedence>(); */
-      /* if (precedence.isHighestPrecedence) { */
-        /* collider.gameObject.transform.parent.GetComponent<ExpressionController>().Regenerate(); */
-        /* AudioSource.PlayClipAtPoint(explodeClip, transform.position); */
-      /* } else { */
-        /* AudioSource.PlayClipAtPoint(ughClip, transform.position); */
-      /* } */
+      if (ExpressionController.singleton.OnExpressionHit(collider.gameObject, transform.position.y)) {
+        StartCoroutine(DeleteSoon());
+      }
     }
+  }
+
+  IEnumerator DeleteSoon() {
+    yield return new WaitForFixedUpdate();
+    Destroy(gameObject);
   }
 }
