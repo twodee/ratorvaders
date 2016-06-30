@@ -7,51 +7,33 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public abstract class ExpressionInfixBinaryOperator : Expression {
-  protected Expression left;
+public abstract class ExpressionPrefixUnaryOperator : Expression {
   protected Expression right;
   protected string label;
 
-  private Pair<GameObject, Text> leftOpen = null;
-  private Pair<GameObject, Text> leftClose = null;
   private Pair<GameObject, Text> rightOpen = null;
   private Pair<GameObject, Text> rightClose = null;
   private Pair<GameObject, Text> rator = null;
-  private GameObject lo = null;
   private GameObject ro = null;
 
-  public ExpressionInfixBinaryOperator(Expression left,
-                                       Expression right,
+  public ExpressionPrefixUnaryOperator(Expression right,
                                        Precedence precedence,
                                        string label) : base(precedence) {
-    this.left = left;
     this.right = right;
     this.label = label;
   }
 
   override public GameObject GenerateGameObject() {
-    lo = left.GenerateGameObject();
     ro = right.GenerateGameObject();
     rator = ExpressionController.GeneratePiece(label, this);
 
     gameObject = new GameObject(ToString());
     gameObject.AddComponent<BoxCollider2D>();
 
-    // Add left child
-    if (left.precedence.CompareTo(precedence) < 0) {
-      leftOpen = ExpressionController.GeneratePiece("(");
-      leftClose = ExpressionController.GeneratePiece(")");
-      leftOpen.first.transform.parent = gameObject.transform;
-      lo.transform.parent = gameObject.transform;
-      leftClose.first.transform.parent = gameObject.transform;
-    } else {
-      lo.transform.parent = gameObject.transform;
-    }
-
     rator.first.transform.parent = gameObject.transform;
 
     // Add right child
-    if (right.precedence.CompareTo(precedence) <= 0) {
+    if (right.precedence.CompareTo(precedence) < 0) {
       rightOpen = ExpressionController.GeneratePiece("(");
       rightClose = ExpressionController.GeneratePiece(")");
       rightOpen.first.transform.parent = gameObject.transform;
@@ -67,7 +49,6 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
   }
 
   override public void Relayout(float height, bool isAnimated) {
-    left.Relayout(height, isAnimated);
     right.Relayout(height, isAnimated);
     ExpressionController.singleton.StartCoroutine(PositionAndFit(height, isAnimated));
   }
@@ -75,28 +56,14 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
   IEnumerator PositionAndFit(float height, bool isAnimated) {
     yield return null;
 
-    float operatorPadding = 0.5f;
-
     // How wide is the operator?
     Vector3[] corners = new Vector3[4];
     rator.second.GetComponent<RectTransform>().GetWorldCorners(corners);
-    float operatorWidth = corners[2].x - corners[0].x + operatorPadding;
-
+    float operatorWidth = corners[2].x - corners[0].x;
     rator.first.GetComponent<BoxCollider2D>().size = new Vector2(corners[2].x - corners[0].x, corners[2].y - corners[0].y);
 
     // How wide are the operand expressions?
-    Bounds leftBounds = lo.GetComponent<BoxCollider2D>().bounds;
     Bounds rightBounds = ro.GetComponent<BoxCollider2D>().bounds;
-
-    // How wide are the left parentheses?
-    float leftOpenParenthesisWidth = 0.0f;
-    float leftCloseParenthesisWidth = 0.0f;
-    if (leftClose != null) {
-      leftOpen.second.GetComponent<RectTransform>().GetWorldCorners(corners);
-      leftOpenParenthesisWidth = corners[2].x - corners[0].x;
-      leftClose.second.GetComponent<RectTransform>().GetWorldCorners(corners);
-      leftCloseParenthesisWidth = corners[2].x - corners[0].x;
-    }
 
     // How wide are the right parentheses?
     float rightOpenParenthesisWidth = 0.0f;
@@ -109,27 +76,11 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
     }
 
     // How wide is everything?
-    float totalWidth = operatorWidth + leftBounds.size.x + rightBounds.size.x + leftOpenParenthesisWidth + leftCloseParenthesisWidth + rightOpenParenthesisWidth + rightCloseParenthesisWidth;
+    float totalWidth = operatorWidth + rightBounds.size.x + rightOpenParenthesisWidth + rightCloseParenthesisWidth;
 
     // Now let's move everything.
     MoveTo(gameObject, new Vector3(0, height, 0), isAnimated);
     float leftSoFar = totalWidth * -0.5f;
-
-    // (
-    if (leftOpen != null) {
-      MoveTo(leftOpen.first, new Vector3(leftSoFar + leftOpenParenthesisWidth * 0.5f, height, 0), isAnimated);
-      leftSoFar += leftOpenParenthesisWidth;
-    }
-
-    // Left subexpression
-    MoveTo(lo, new Vector3(leftSoFar + leftBounds.extents.x, height, 0), isAnimated);
-    leftSoFar += leftBounds.size.x;
-
-    // )
-    if (leftClose != null) {
-      MoveTo(leftClose.first, new Vector3(leftSoFar + leftCloseParenthesisWidth * 0.5f, height, 0), isAnimated);
-      leftSoFar += leftCloseParenthesisWidth;
-    }
 
     // Operator
     MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, height, 0), isAnimated);
@@ -153,7 +104,7 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
 
     Bounds b = new Bounds(Vector3.zero, new Vector3(1, 1, 0));
 
-    Vector3 least = leftBounds.min;
+    Vector3 least = rightBounds.min;
     least.x = -totalWidth * 0.5f;
     Vector3 most = rightBounds.max;
     most.x = totalWidth * 0.5f;
@@ -163,16 +114,9 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
   }
 
   override public Expression GetHighestPrecedentSubexpression() {
-    // The highest precedent subexpression is the leafmost, leftmost one. So,
-    // we try the left child first. Failing that, the right child. Failing
-    // that, we're it.
- 
-    Expression winner = left.GetHighestPrecedentSubexpression();
+    Expression winner = right.GetHighestPrecedentSubexpression();
     if (winner == null) {
-      winner = right.GetHighestPrecedentSubexpression();
-      if (winner == null) {
-        winner = this;
-      }
+      winner = this;
     }
 
     return winner;
@@ -181,15 +125,9 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
   override public string ToString() {
     string s = "";
 
-    if (left.precedence.CompareTo(precedence) < 0) {
-      s += "(" + left.ToString() + ")";
-    } else {
-      s += left.ToString();
-    }
+    s += label + " ";
 
-    s += " " + label + " ";
-
-    if (right.precedence.CompareTo(precedence) <= 0) {
+    if (right.precedence.CompareTo(precedence) < 0) {
       s += "(" + right.ToString() + ")";
     } else {
       s += right.ToString();
@@ -199,22 +137,7 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
   }
 
   override public Expression Resolve(Expression toResolve) {
-    if (toResolve == left) {
-      Expression replacementExpr = toResolve.Evaluate();
-      GameObject replacementObject = replacementExpr.GenerateGameObject();
-      replacementObject.transform.parent = gameObject.transform;
-      replacementObject.transform.localPosition = lo.transform.localPosition;
-
-      if (leftOpen != null) {
-        GameObject.Destroy(leftOpen.first);
-        GameObject.Destroy(leftClose.first);
-      }
-      GameObject.Destroy(lo);
-      leftOpen = leftClose = null;
-      lo = replacementObject;
-      left = replacementExpr;
-      return this;
-    } else if (toResolve == right) {
+    if (toResolve == right) {
       Expression replacementExpr = toResolve.Evaluate();
       GameObject replacementObject = replacementExpr.GenerateGameObject();
       replacementObject.transform.parent = gameObject.transform;
@@ -237,7 +160,6 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
       GameObject.Destroy(this.gameObject);
       return replacementExpr;
     } else {
-      left = left.Resolve(toResolve);
       right = right.Resolve(toResolve);
       return this;
     }

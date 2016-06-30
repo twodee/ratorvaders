@@ -1,8 +1,14 @@
 namespace RatorVaders {
 
 public class Precedence {
-  public static Precedence ADDITIVE = new Precedence(1, Association.LEFT);
-  public static Precedence MULTIPLICATIVE = new Precedence(2, Association.LEFT);
+
+  public static Precedence OR = new Precedence(9, Association.LEFT);
+  public static Precedence AND = new Precedence(10, Association.LEFT);
+  public static Precedence EQUALITY = new Precedence(11, Association.LEFT);
+  public static Precedence RELATIONAL = new Precedence(13, Association.LEFT);
+  public static Precedence ADDITIVE = new Precedence(15, Association.LEFT);
+  public static Precedence MULTIPLICATIVE = new Precedence(20, Association.LEFT);
+  public static Precedence NOT = new Precedence(50, Association.LEFT);
   public static Precedence LITERAL = new Precedence(100, Association.LEFT);
 
   public enum Association {

@@ -27,27 +27,29 @@ public class PlayerController : MonoBehaviour {
   void Update() {
     if (isDead) return;
 
-    // Move player left or right based on user input.
-    float h = Input.GetAxis("Horizontal");
-    Vector3 position = transform.position;
-    position.x += h * speed * Time.deltaTime;
+    if (!ExpressionController.singleton.isAnswering) {
+      // Move player left or right based on user input.
+      float h = Input.GetAxis("Horizontal");
+      Vector3 position = transform.position;
+      position.x += h * speed * Time.deltaTime;
 
-    // Keep player on screen.
-    float right = Camera.main.orthographicSize * Camera.main.aspect;
-    position.x = Mathf.Clamp(position.x, -right + radius, right - radius);
+      // Keep player on screen.
+      float right = Camera.main.orthographicSize * Camera.main.aspect;
+      position.x = Mathf.Clamp(position.x, -right + radius, right - radius);
 
-    transform.position = position;
+      transform.position = position;
 
-    // Shoot projectile.
-    if (ammo.activeInHierarchy && Input.GetButtonDown("Fire1")) {
-      GameObject projectileInstance = (GameObject) Instantiate(projectile, transform.position, Quaternion.identity);
-      projectileInstance.transform.parent = projectiles;
-      ammo.SetActive(false);
+      // Shoot projectile.
+      if (ammo.activeInHierarchy && Input.GetButtonDown("Fire1")) {
+        GameObject projectileInstance = (GameObject) Instantiate(projectile, transform.position, Quaternion.identity);
+        projectileInstance.transform.parent = projectiles;
+        ammo.SetActive(false);
+      }
     }
   }
 
   void OnTriggerEnter2D(Collider2D collider) {
-    if (collider.CompareTag("Expression")) {
+    if (!isDead && collider.CompareTag("Expression")) {
       isDead = true;
       StartCoroutine(GameOver());
     }

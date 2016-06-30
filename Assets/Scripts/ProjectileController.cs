@@ -5,7 +5,7 @@ public class ProjectileController : MonoBehaviour {
   public float speed = 10;
   public AudioClip explodeClip;
   public AudioClip ughClip;
-  public PlayerController player;
+  private PlayerController player;
 
   void Start() {
     player = GameObject.Find("/Player").GetComponent<PlayerController>();
@@ -25,14 +25,7 @@ public class ProjectileController : MonoBehaviour {
 
   void OnTriggerStay2D(Collider2D collider) {
     if (collider.CompareTag("Expression")) {
-      if (ExpressionController.singleton.OnExpressionHit(collider.gameObject, transform.position.y)) {
-        StartCoroutine(DeleteSoon());
-      }
+      ExpressionController.singleton.OnExpressionHit(collider.gameObject, transform.position.y, gameObject);
     }
-  }
-
-  IEnumerator DeleteSoon() {
-    yield return new WaitForFixedUpdate();
-    Destroy(gameObject);
   }
 }
