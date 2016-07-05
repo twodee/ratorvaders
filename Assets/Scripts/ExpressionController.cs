@@ -10,6 +10,7 @@ public class ExpressionController : MonoBehaviour {
   private bool isHit = false;
   private bool isRightHit = false;
 
+  public PlayerController player;
   public Font font;
   public GameObject piecePrefab;
   public GameObject canvas;
@@ -19,6 +20,7 @@ public class ExpressionController : MonoBehaviour {
   public GameObject triggerThreshold;
   public GuessBox guessBox;
   public GameObject highlighterPrefab;
+  public GameObject highlighter;
   public AudioSource audioSource;
   public AudioClip hitPrecedentClip;
   public AudioClip hitNotPrecedentClip;
@@ -70,9 +72,9 @@ public class ExpressionController : MonoBehaviour {
     return new Pair<GameObject, Text>(instance, text);
   }
 
-  public void OnExpressionHit(GameObject gameObject, float projectileY, GameObject projectile) {
+  public bool OnExpressionHit(GameObject gameObject, float projectileY, GameObject projectile) {
     if (projectileY < triggerThreshold.transform.position.y) {
-      return;
+      return false;
     }
 
     isHit = true;
@@ -88,18 +90,23 @@ public class ExpressionController : MonoBehaviour {
       } else {
         Bounds b = highestPrecedent.gameObject.GetComponent<BoxCollider2D>().bounds;
 
-        GameObject highlighter = (GameObject) Instantiate(highlighterPrefab, highestPrecedent.gameObject.transform.position, Quaternion.identity);
+        highlighter = (GameObject) Instantiate(highlighterPrefab, highestPrecedent.gameObject.transform.position, Quaternion.identity);
         highlighter.transform.localScale = new Vector3(b.size.x, b.size.y, 1);
         highlighter.transform.parent = highestPrecedent.gameObject.transform;
         highlighter.GetComponent<SpriteRenderer>().color = guessBox.GetComponent<Image>().color;
 
-        guessBox.gameObject.SetActive(true);
-        guessBox.AppendCursor();
+        // Sometimes a stray bullet can hit after the player is dead. No input
+        // in such a case.
+        if (!player.isDead) {
+          guessBox.gameObject.SetActive(true);
+          guessBox.AppendCursor();
+        }
         audioSource.PlayOneShot(hitPrecedentClip);
       }
     }
 
     Destroy(projectile);
+    return true;
   }
 
   void LateUpdate() {
@@ -138,9 +145,13 @@ public class ExpressionController : MonoBehaviour {
     }
   }
 
+  public void HideInput() {
+    guessBox.Hide();
+    Destroy(highlighter);
+  }
+
   public void Resolve() {
-    guessBox.text = "";
-    guessBox.gameObject.SetActive(false);
+    HideInput();
 
     expr = expr.Resolve(highestPrecedent);
     expr.Relayout(expr.gameObject.transform.localPosition.y, true);
@@ -151,5 +162,6 @@ public class ExpressionController : MonoBehaviour {
     }
 
     audioSource.PlayOneShot(resolvedClip);
+    highlighter = null;
   }
 }

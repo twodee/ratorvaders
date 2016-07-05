@@ -79,7 +79,7 @@ public abstract class Expression {
       int i = Random.Range(1, 10);
       return new ExpressionInteger(i);
     } else {
-      int nOperations = 5;
+      int nOperations = 7;
       int operation = Random.Range(0, nOperations);
       int nLevelsLeft = Random.Range(0, nLevels);
       int nLevelsRight = Random.Range(0, nLevels);
@@ -96,9 +96,19 @@ public abstract class Expression {
       } else if (operation == 3) {
         return new ExpressionAdd(GenerateExpressionInteger(nLevelsLeft),
                                  GenerateExpressionInteger(nLevelsRight));  
-      } else {
+      } else if (operation == 4) {
         return new ExpressionSubtract(GenerateExpressionInteger(nLevelsLeft),
                                       GenerateExpressionInteger(nLevelsRight));  
+      } else if (operation == 5) {
+        List<Expression> parameters = new List<Expression>();
+        parameters.Add(GenerateExpressionInteger(nLevelsRight));
+        parameters.Add(GenerateExpressionInteger(nLevelsRight));
+        return new ExpressionMax(parameters);
+      } else {
+        List<Expression> parameters = new List<Expression>();
+        parameters.Add(GenerateExpressionInteger(nLevelsRight));
+        parameters.Add(GenerateExpressionInteger(nLevelsRight));
+        return new ExpressionMin(parameters);
       }
     }
   }

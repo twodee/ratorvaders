@@ -6,9 +6,11 @@ public class ProjectileController : MonoBehaviour {
   public AudioClip explodeClip;
   public AudioClip ughClip;
   private PlayerController player;
+  private bool isDead;
 
   void Start() {
     player = GameObject.Find("/Player").GetComponent<PlayerController>();
+    isDead = false;
   }
   
   void Update() {
@@ -24,8 +26,10 @@ public class ProjectileController : MonoBehaviour {
   }
 
   void OnTriggerStay2D(Collider2D collider) {
-    if (collider.CompareTag("Expression")) {
-      ExpressionController.singleton.OnExpressionHit(collider.gameObject, transform.position.y, gameObject);
+    if (!isDead && collider.CompareTag("Expression")) {
+      if (ExpressionController.singleton.OnExpressionHit(collider.gameObject, transform.position.y, gameObject)) {
+        isDead = true;
+      }
     }
   }
 }

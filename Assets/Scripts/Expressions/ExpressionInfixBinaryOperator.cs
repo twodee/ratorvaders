@@ -75,12 +75,13 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
   IEnumerator PositionAndFit(float height, bool isAnimated) {
     yield return null;
 
-    float operatorPadding = 0.5f;
-
     // How wide is the operator?
     Vector3[] corners = new Vector3[4];
     rator.second.GetComponent<RectTransform>().GetWorldCorners(corners);
-    float operatorWidth = corners[2].x - corners[0].x + operatorPadding;
+    float operatorWidth = corners[2].x - corners[0].x;
+
+    float operatorPadding = operatorWidth / label.Length * 0.5f;
+    operatorWidth += operatorPadding;
 
     rator.first.GetComponent<BoxCollider2D>().size = new Vector2(corners[2].x - corners[0].x, corners[2].y - corners[0].y);
 

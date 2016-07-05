@@ -17,4 +17,9 @@ public class GuessBox : InputField {
     ActivateInputField();
     isDeselectPending = true;
   }
+
+  public void Hide() {
+    text = "";
+    gameObject.SetActive(false);
+  }
 }

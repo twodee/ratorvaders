@@ -841,18 +841,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8729e54b44b741c1bf9f5d117741cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1707110982}
   font: {fileID: 12800000, guid: 6f8e527ed6ecb46feb7e890cec344650, type: 3}
   piecePrefab: {fileID: 123966, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
   canvas: {fileID: 1405407623}
-  speed: 0.1
+  speed: 1
   triggerThreshold: {fileID: 1226565328}
   guessBox: {fileID: 323792119}
   highlighterPrefab: {fileID: 183238, guid: f7ab0b41816d34653850c2cf494acd7a, type: 2}
+  highlighter: {fileID: 0}
   audioSource: {fileID: 0}
   hitPrecedentClip: {fileID: 8300000, guid: 56262550df3a842ecb42b0a74b4119de, type: 3}
   hitNotPrecedentClip: {fileID: 8300000, guid: 0516457a508ef448eaf1ad3d878c469c, type: 3}
   resolvedClip: {fileID: 8300000, guid: 10d5f01aeda0848ac861e00f829bb93a, type: 3}
-  jj: 0
 --- !u!82 &1058872007
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1189,33 +1190,6 @@ CanvasRenderer:
 GameObject:
   m_PrefabParentObject: {fileID: 152494, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
   m_PrefabInternal: {fileID: 1247892418}
---- !u!1 &1504753631
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1504753632}
-  m_Layer: 0
-  m_Name: Tester
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1504753632
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1504753631}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
 --- !u!1 &1532033596
 GameObject:
   m_ObjectHideFlags: 0
@@ -1522,4 +1496,4 @@ Transform:
   - {fileID: 904116563}
   - {fileID: 1988294740}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6

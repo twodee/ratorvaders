@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour {
 
   void OnTriggerEnter2D(Collider2D collider) {
     if (!isDead && collider.CompareTag("Expression")) {
+      ExpressionController.singleton.HideInput();
       isDead = true;
       StartCoroutine(GameOver());
     }
