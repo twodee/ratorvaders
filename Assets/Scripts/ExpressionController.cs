@@ -27,6 +27,16 @@ public class ExpressionController : MonoBehaviour {
   public AudioClip resolvedClip;
   public int nLevels;
 
+  public int additiveWeight;
+  public int multiplicativeWeight;
+  public int logicalWeight;
+  public int relationalWeight;
+  public int equalityWeight;
+  public int concatWeight;
+  public int indexOfWeight;
+  public int charAtWeight;
+  public int minMaxWeight;
+
   public bool isAnswering {
     get {
       return guessBox.gameObject.activeInHierarchy;
@@ -150,6 +160,9 @@ public class ExpressionController : MonoBehaviour {
         }
       }
     }
+
+    Debug.Log("isParseable: " + isParseable);
+    Debug.Log("isCorrect: " + isCorrect);
 
     if (isParseable && isCorrect) {
       Resolve(); 

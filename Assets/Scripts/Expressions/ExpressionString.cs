@@ -14,7 +14,7 @@ public class ExpressionString : ExpressionLiteral {
     this.i = i;
   }
 
-  public string ToUnquotedString() {
+  override public string ToRawString() {
     return i;
   }
 }

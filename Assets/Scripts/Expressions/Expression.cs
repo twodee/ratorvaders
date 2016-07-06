@@ -10,6 +10,16 @@ public abstract class Expression {
   private Precedence _precedence;
   public GameObject gameObject;
 
+  public static int additiveWeight = ExpressionController.singleton.additiveWeight;
+  public static int multiplicativeWeight = ExpressionController.singleton.multiplicativeWeight;
+  public static int logicalWeight = ExpressionController.singleton.logicalWeight;
+  public static int relationalWeight = ExpressionController.singleton.relationalWeight;
+  public static int equalityWeight = ExpressionController.singleton.equalityWeight;
+  public static int concatWeight = ExpressionController.singleton.concatWeight;
+  public static int indexOfWeight = ExpressionController.singleton.indexOfWeight;
+  public static int charAtWeight = ExpressionController.singleton.charAtWeight;
+  public static int minMaxWeight = ExpressionController.singleton.minMaxWeight;
+
   public Precedence precedence {
     set {
       _precedence = value;
@@ -63,19 +73,17 @@ public abstract class Expression {
   }
 
   public static Expression GenerateExpression(int nLevels) {
-    int ntypes = 2;
-    int type = Random.Range(0, ntypes);
+    int integerWeight = additiveWeight + multiplicativeWeight + indexOfWeight + minMaxWeight;
+    int booleanWeight = logicalWeight + relationalWeight + equalityWeight;
+    int stringWeight = concatWeight;
+    int totalWeight = integerWeight + booleanWeight + stringWeight;
 
-    if (false) {
-      List<Expression> parameters = new List<Expression>();
-      parameters.Add(new ExpressionInteger(1));
-      return new ExpressionCharAt(new ExpressionString("dog"), parameters);
-    } else if (true) {
-      List<Expression> parameters = new List<Expression>();
-      parameters.Add(new ExpressionChar('z'));
-      return new ExpressionIndexOf(new ExpressionString("xyz"), parameters);
-    } else if (type == 0) {
+    int w = Random.Range(0, totalWeight);
+
+    if (w < integerWeight) {
       return GenerateExpressionInteger(nLevels);
+    } else if (w < integerWeight + stringWeight) {
+      return GenerateExpressionString(nLevels);
     } else {
       return GenerateExpressionBoolean(nLevels);
     }
@@ -86,36 +94,49 @@ public abstract class Expression {
       int i = Random.Range(1, 10);
       return new ExpressionInteger(i);
     } else {
-      int nOperations = 7;
-      int operation = Random.Range(0, nOperations);
+      int totalWeight = additiveWeight + multiplicativeWeight + indexOfWeight + minMaxWeight;
+      int w = Random.Range(0, totalWeight);
       int nLevelsLeft = Random.Range(0, nLevels);
       int nLevelsRight = Random.Range(0, nLevels);
 
-      if (operation == 0) {
-        return new ExpressionMultiply(GenerateExpressionInteger(nLevelsLeft),
+      if (w < additiveWeight) {
+        int operation = Random.Range(0, 2);
+        if (operation == 0) {
+          return new ExpressionAdd(GenerateExpressionInteger(nLevelsLeft),
+                                   GenerateExpressionInteger(nLevelsRight));  
+        } else {
+          return new ExpressionSubtract(GenerateExpressionInteger(nLevelsLeft),
+                                        GenerateExpressionInteger(nLevelsRight));  
+        }
+      } else if (w < additiveWeight + multiplicativeWeight) {
+        int operation = Random.Range(0, 3);
+        if (operation == 0) {
+          return new ExpressionMultiply(GenerateExpressionInteger(nLevelsLeft),
+                                        GenerateExpressionInteger(nLevelsRight));  
+        } else if (operation == 1) {
+          return new ExpressionDivide(GenerateExpressionInteger(nLevelsLeft),
                                       GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 1) {
-        return new ExpressionDivide(GenerateExpressionInteger(nLevelsLeft),
-                                    GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 2) {
-        return new ExpressionMod(GenerateExpressionInteger(nLevelsLeft),
-                                 GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 3) {
-        return new ExpressionAdd(GenerateExpressionInteger(nLevelsLeft),
-                                 GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 4) {
-        return new ExpressionSubtract(GenerateExpressionInteger(nLevelsLeft),
-                                      GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 5) {
+        } else {
+          return new ExpressionMod(GenerateExpressionInteger(nLevelsLeft),
+                                   GenerateExpressionInteger(nLevelsRight));  
+        }
+      } else if (w < additiveWeight + multiplicativeWeight + indexOfWeight) {
         List<Expression> parameters = new List<Expression>();
-        parameters.Add(GenerateExpressionInteger(nLevelsRight));
-        parameters.Add(GenerateExpressionInteger(nLevelsRight));
-        return new ExpressionMax(parameters);
+        parameters.Add(GenerateExpressionChar(nLevelsRight));
+        return new ExpressionIndexOf(GenerateExpressionString(nLevelsLeft), parameters);
       } else {
-        List<Expression> parameters = new List<Expression>();
-        parameters.Add(GenerateExpressionInteger(nLevelsRight));
-        parameters.Add(GenerateExpressionInteger(nLevelsRight));
-        return new ExpressionMin(parameters);
+        int operation = Random.Range(0, 2);
+        if (operation == 0) {
+          List<Expression> parameters = new List<Expression>();
+          parameters.Add(GenerateExpressionInteger(nLevelsLeft));
+          parameters.Add(GenerateExpressionInteger(nLevelsRight));
+          return new ExpressionMax(parameters);
+        } else {
+          List<Expression> parameters = new List<Expression>();
+          parameters.Add(GenerateExpressionInteger(nLevelsLeft));
+          parameters.Add(GenerateExpressionInteger(nLevelsRight));
+          return new ExpressionMin(parameters);
+        }
       }
     }
   }
@@ -125,33 +146,84 @@ public abstract class Expression {
       bool b = Random.Range(0, 2) == 0 ? false : true;
       return new ExpressionBoolean(b);
     } else {
-      int nOperations = 7;
-      int operation = Random.Range(0, nOperations);
+      int totalWeight = logicalWeight + relationalWeight + equalityWeight;
+      int w = Random.Range(0, totalWeight);
       int nLevelsLeft = Random.Range(0, nLevels);
       int nLevelsRight = Random.Range(0, nLevels);
 
-      if (operation == 0) {
-        return new ExpressionAnd(GenerateExpressionBoolean(nLevelsLeft),
-                                 GenerateExpressionBoolean(nLevelsRight));  
-      } else if (operation == 1) {
-        return new ExpressionOr(GenerateExpressionBoolean(nLevelsLeft),
-                                GenerateExpressionBoolean(nLevelsRight));  
-      } else if (operation == 2) {
-        return new ExpressionGreaterThan(GenerateExpressionInteger(nLevelsLeft),
-                                         GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 3) {
-        return new ExpressionGreaterThanOrEqualTo(GenerateExpressionInteger(nLevelsLeft),
-                                                  GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 4) {
-        return new ExpressionLessThan(GenerateExpressionInteger(nLevelsLeft),
-                                      GenerateExpressionInteger(nLevelsRight));  
-      } else if (operation == 5) {
-        return new ExpressionLessThanOrEqualTo(GenerateExpressionInteger(nLevelsLeft),
-                                               GenerateExpressionInteger(nLevelsRight));  
+      if (w < logicalWeight) {
+        int operation = Random.Range(0, 3);
+        if (operation == 0) {
+          return new ExpressionAnd(GenerateExpressionBoolean(nLevelsLeft),
+                                   GenerateExpressionBoolean(nLevelsRight));  
+        } else if (operation == 1) {
+          return new ExpressionOr(GenerateExpressionBoolean(nLevelsLeft),
+                                  GenerateExpressionBoolean(nLevelsRight));  
+        } else {
+          return new ExpressionNot(GenerateExpressionBoolean(nLevelsRight));  
+        }
+      } else if (w < logicalWeight + relationalWeight) {
+        int operation = Random.Range(0, 4);
+        if (operation == 0) {
+          return new ExpressionGreaterThan(GenerateExpressionInteger(nLevelsLeft),
+                                           GenerateExpressionInteger(nLevelsRight));  
+        } else if (operation == 1) {
+          return new ExpressionGreaterThanOrEqualTo(GenerateExpressionInteger(nLevelsLeft),
+                                                    GenerateExpressionInteger(nLevelsRight));  
+        } else if (operation == 2) {
+          return new ExpressionLessThan(GenerateExpressionInteger(nLevelsLeft),
+                                        GenerateExpressionInteger(nLevelsRight));  
+        } else {
+          return new ExpressionLessThanOrEqualTo(GenerateExpressionInteger(nLevelsLeft),
+                                                 GenerateExpressionInteger(nLevelsRight));  
+        }
       } else {
-        return new ExpressionNot(GenerateExpressionBoolean(nLevelsRight));  
+        int operation = Random.Range(0, 2);
+        if (operation == 0) {
+          return new ExpressionEqual(GenerateExpressionInteger(nLevelsLeft),
+                                     GenerateExpressionInteger(nLevelsRight));  
+        } else {
+          return new ExpressionNotEqual(GenerateExpressionInteger(nLevelsLeft),
+                                        GenerateExpressionInteger(nLevelsRight));  
+        }
       }
     }
+  }
+
+  public static Expression GenerateExpressionString(int nLevels) {
+    if (nLevels <= 0) {
+      string[] words = {"dog", "cat", "zebra", "fish", "seven", "Bean"};
+      int i = Random.Range(0, words.Length);
+      return new ExpressionString(words[i]);
+    } else {
+      int totalWeight = concatWeight;
+      int w = Random.Range(0, totalWeight);
+      int nLevelsLeft = Random.Range(0, nLevels);
+      int nLevelsRight = Random.Range(0, nLevels);
+
+      if (true || w < concatWeight) {
+        Expression l, r;
+        int whichIsString = Random.Range(0, 2);
+        if (whichIsString == 0) {
+          l = GenerateExpression(nLevelsLeft);
+          r = GenerateExpressionString(nLevelsRight);
+        } else {
+          l = GenerateExpressionString(nLevelsLeft);
+          r = GenerateExpression(nLevelsRight);
+        }
+        return new ExpressionConcat(l, r);
+      }
+    }
+  }
+
+  public static Expression GenerateExpressionChar(int nLevels) {
+    string chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+:<>[]{}(),./?\\|~";
+    int i = Random.Range(0, chars.Length);
+    return new ExpressionChar(chars[i]);
+  }
+
+  virtual public string ToRawString() {
+    return ToString();
   }
 }
 

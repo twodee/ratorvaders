@@ -13,6 +13,8 @@ public abstract class ExpressionMethodCall : Expression {
   protected string label;
 
   private GameObject invokerObject;
+  private Pair<GameObject, Text> invokerOpen = null;
+  private Pair<GameObject, Text> invokerClose = null;
   private Pair<GameObject, Text> dot;
   private Pair<GameObject, Text> open;
   private Pair<GameObject, Text> close;
@@ -38,6 +40,14 @@ public abstract class ExpressionMethodCall : Expression {
     // Add invoker.
     invokerObject = invokerExpression.GenerateGameObject();
     invokerObject.transform.parent = gameObject.transform;
+
+    // Add parentheses around invoker, if needed.
+    if (invokerExpression.precedence.CompareTo(precedence) < 0) {
+      invokerOpen = ExpressionController.GeneratePiece("(");
+      invokerOpen.first.transform.parent = gameObject.transform;
+      invokerClose = ExpressionController.GeneratePiece(")");
+      invokerClose.first.transform.parent = gameObject.transform;
+    }
  
     // Add .
     dot = ExpressionController.GeneratePiece(".");
@@ -85,6 +95,15 @@ public abstract class ExpressionMethodCall : Expression {
     // How wide is the invoker?
     Bounds invokerBounds = invokerObject.GetComponent<BoxCollider2D>().bounds;
 
+    float invokerOpenParenthesisWidth = 0.0f;
+    float invokerCloseParenthesisWidth = 0.0f;
+    if (invokerOpen != null) {
+      invokerOpen.second.GetComponent<RectTransform>().GetWorldCorners(corners);
+      invokerOpenParenthesisWidth = corners[2].x - corners[0].x;
+      invokerClose.second.GetComponent<RectTransform>().GetWorldCorners(corners);
+      invokerCloseParenthesisWidth = corners[2].x - corners[0].x;
+    }
+
     // How wide is the .?
     dot.second.GetComponent<RectTransform>().GetWorldCorners(corners);
     float dotWidth = corners[2].x - corners[0].x;
@@ -112,7 +131,7 @@ public abstract class ExpressionMethodCall : Expression {
     closeWidth = corners[2].x - corners[0].x;
 
     // How wide is everything?
-    float totalWidth = invokerBounds.size.x + dotWidth + operatorWidth + openWidth + closeWidth;
+    float totalWidth = invokerOpenParenthesisWidth + invokerBounds.size.x + invokerCloseParenthesisWidth + dotWidth + operatorWidth + openWidth + closeWidth;
     foreach (Bounds box in bounds) {
       totalWidth += box.size.x;
     }
@@ -130,9 +149,19 @@ public abstract class ExpressionMethodCall : Expression {
     MoveTo(gameObject, new Vector3(0, 0, 0), isAnimated);
     float leftSoFar = totalWidth * -0.5f;
 
+    if (invokerOpen != null) {
+      MoveTo(invokerOpen.first, new Vector3(leftSoFar + invokerOpenParenthesisWidth * 0.5f, 0, 0), isAnimated);
+      leftSoFar += invokerOpenParenthesisWidth;
+    }
+
     // Invoker
     MoveTo(invokerObject, new Vector3(leftSoFar + invokerBounds.extents.x, 0, 0), isAnimated);
     leftSoFar += invokerBounds.size.x;
+
+    if (invokerClose != null) {
+      MoveTo(invokerClose.first, new Vector3(leftSoFar + invokerCloseParenthesisWidth * 0.5f, 0, 0), isAnimated);
+      leftSoFar += invokerCloseParenthesisWidth;
+    }
 
     // .
     MoveTo(dot.first, new Vector3(leftSoFar + dotWidth * 0.5f, 0, 0), isAnimated);
@@ -175,15 +204,21 @@ public abstract class ExpressionMethodCall : Expression {
     // The highest precedent subexpression is the leafmost, leftmost one. So,
     // we try the left child first. Failing that, the right child. Failing
     // that, we're it.
+
+    Expression winner = invokerExpression.GetHighestPrecedentSubexpression();
+    if (winner != null) {
+      return winner;
+    }
  
     foreach (Expression parameterExpression in parameterExpressions) {
-      Expression winner = parameterExpression.GetHighestPrecedentSubexpression();
+      winner = parameterExpression.GetHighestPrecedentSubexpression();
       if (winner != null) {
         return winner;
       }
     }
 
-    return this;
+    winner = this;
+    return winner;
   }
 
   override public string ToString() {
@@ -202,6 +237,25 @@ public abstract class ExpressionMethodCall : Expression {
   }
 
   override public Expression Resolve(Expression toResolve) {
+    if (toResolve == invokerExpression) {
+      Expression replacementExpr = toResolve.Evaluate();
+      GameObject replacementObject = replacementExpr.GenerateGameObject();
+      replacementObject.transform.parent = gameObject.transform;
+      replacementObject.transform.localPosition = invokerObject.transform.localPosition;
+
+      GameObject.Destroy(invokerObject);
+      invokerObject = replacementObject;
+      invokerExpression = replacementExpr;
+
+      if (invokerOpen != null) {
+        GameObject.Destroy(invokerOpen.first);
+        GameObject.Destroy(invokerClose.first);
+        invokerOpen = invokerClose = null;
+      }
+
+      return this;
+    }
+
     for (int i = 0; i < parameterExpressions.Count; ++i) {
       if (toResolve == parameterExpressions[i]) {
         Expression replacementExpr = toResolve.Evaluate();

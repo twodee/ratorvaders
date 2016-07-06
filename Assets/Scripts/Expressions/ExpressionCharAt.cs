@@ -12,7 +12,7 @@ public class ExpressionCharAt : ExpressionMethodCall {
   }
 
   override public Expression Evaluate() {
-    string s = ((ExpressionString) invokerExpression.Evaluate()).ToUnquotedString();
+    string s = ((ExpressionString) invokerExpression.Evaluate()).ToRawString();
     int i = ((ExpressionInteger) parameterExpressions[0].Evaluate()).ToInt();
     return new ExpressionChar(s[i]);
   }

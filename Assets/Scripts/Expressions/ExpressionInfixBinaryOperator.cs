@@ -209,9 +209,9 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
       if (leftOpen != null) {
         GameObject.Destroy(leftOpen.first);
         GameObject.Destroy(leftClose.first);
+        leftOpen = leftClose = null;
       }
       GameObject.Destroy(lo);
-      leftOpen = leftClose = null;
       lo = replacementObject;
       left = replacementExpr;
       return this;

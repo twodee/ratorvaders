@@ -12,7 +12,7 @@ public class ExpressionIndexOf : ExpressionMethodCall {
   }
 
   override public Expression Evaluate() {
-    string s = ((ExpressionString) invokerExpression.Evaluate()).ToUnquotedString();
+    string s = ((ExpressionString) invokerExpression.Evaluate()).ToRawString();
     char c = ((ExpressionChar) parameterExpressions[0].Evaluate()).ToChar();
     return new ExpressionInteger(s.IndexOf(c));
   }

@@ -855,6 +855,15 @@ MonoBehaviour:
   hitNotPrecedentClip: {fileID: 8300000, guid: 0516457a508ef448eaf1ad3d878c469c, type: 3}
   resolvedClip: {fileID: 8300000, guid: 10d5f01aeda0848ac861e00f829bb93a, type: 3}
   nLevels: 3
+  additiveWeight: 1
+  multiplicativeWeight: 0
+  logicalWeight: 0
+  relationalWeight: 0
+  equalityWeight: 0
+  concatWeight: 0
+  indexOfWeight: 0
+  charAtWeight: 0
+  minMaxWeight: 100
 --- !u!82 &1058872007
 AudioSource:
   m_ObjectHideFlags: 0
