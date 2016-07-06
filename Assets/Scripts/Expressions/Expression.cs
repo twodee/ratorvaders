@@ -66,10 +66,14 @@ public abstract class Expression {
     int ntypes = 2;
     int type = Random.Range(0, ntypes);
 
-    if (true) {
+    if (false) {
       List<Expression> parameters = new List<Expression>();
       parameters.Add(new ExpressionInteger(1));
       return new ExpressionCharAt(new ExpressionString("dog"), parameters);
+    } else if (true) {
+      List<Expression> parameters = new List<Expression>();
+      parameters.Add(new ExpressionChar('z'));
+      return new ExpressionIndexOf(new ExpressionString("xyz"), parameters);
     } else if (type == 0) {
       return GenerateExpressionInteger(nLevels);
     } else {
