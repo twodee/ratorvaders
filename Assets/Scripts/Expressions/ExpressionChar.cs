@@ -7,14 +7,14 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionString : ExpressionLiteral {
-  private string i;
+public class ExpressionChar : ExpressionLiteral {
+  private char i;
 
-  public ExpressionString(string i) : base("\"" + i + "\"") {
+  public ExpressionChar(char i) : base("'" + i + "'") {
     this.i = i;
   }
 
-  public string ToUnquotedString() {
+  public char ToChar() {
     return i;
   }
 }

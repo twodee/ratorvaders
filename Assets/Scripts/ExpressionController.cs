@@ -136,6 +136,18 @@ public class ExpressionController : MonoBehaviour {
         int guess;
         isParseable = int.TryParse(guessBox.text, out guess);
         isCorrect = guess == exprInteger.ToInt();
+      } else {
+        ExpressionString exprString = answer as ExpressionString;
+        if (exprString != null) {
+          isParseable = true;
+          isCorrect = guessBox.text == exprString.ToString();
+        } else {
+          ExpressionChar exprChar = answer as ExpressionChar;
+          if (exprChar != null) {
+            isParseable = guessBox.text.Length == 1;
+            isCorrect = guessBox.text[0] == exprChar.ToChar();
+          }
+        }
       }
     }
 
