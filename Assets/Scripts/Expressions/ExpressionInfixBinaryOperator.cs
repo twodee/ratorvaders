@@ -61,18 +61,18 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
       ro.transform.parent = gameObject.transform;
     }
 
-    Relayout(0.0f, false);
+    Relayout(false);
 
     return gameObject;
   }
 
-  override public void Relayout(float height, bool isAnimated) {
-    left.Relayout(height, isAnimated);
-    right.Relayout(height, isAnimated);
-    ExpressionController.singleton.StartCoroutine(PositionAndFit(height, isAnimated));
+  override public void Relayout(bool isAnimated) {
+    left.Relayout(isAnimated);
+    right.Relayout(isAnimated);
+    ExpressionController.singleton.StartCoroutine(PositionAndFit(isAnimated));
   }
 
-  IEnumerator PositionAndFit(float height, bool isAnimated) {
+  IEnumerator PositionAndFit(bool isAnimated) {
     yield return null;
 
     // How wide is the operator?
@@ -113,42 +113,42 @@ public abstract class ExpressionInfixBinaryOperator : Expression {
     float totalWidth = operatorWidth + leftBounds.size.x + rightBounds.size.x + leftOpenParenthesisWidth + leftCloseParenthesisWidth + rightOpenParenthesisWidth + rightCloseParenthesisWidth;
 
     // Now let's move everything.
-    MoveTo(gameObject, new Vector3(0, height, 0), isAnimated);
+    MoveTo(gameObject, new Vector3(0, 0, 0), isAnimated);
     float leftSoFar = totalWidth * -0.5f;
 
     // (
     if (leftOpen != null) {
-      MoveTo(leftOpen.first, new Vector3(leftSoFar + leftOpenParenthesisWidth * 0.5f, height, 0), isAnimated);
+      MoveTo(leftOpen.first, new Vector3(leftSoFar + leftOpenParenthesisWidth * 0.5f, 0, 0), isAnimated);
       leftSoFar += leftOpenParenthesisWidth;
     }
 
     // Left subexpression
-    MoveTo(lo, new Vector3(leftSoFar + leftBounds.extents.x, height, 0), isAnimated);
+    MoveTo(lo, new Vector3(leftSoFar + leftBounds.extents.x, 0, 0), isAnimated);
     leftSoFar += leftBounds.size.x;
 
     // )
     if (leftClose != null) {
-      MoveTo(leftClose.first, new Vector3(leftSoFar + leftCloseParenthesisWidth * 0.5f, height, 0), isAnimated);
+      MoveTo(leftClose.first, new Vector3(leftSoFar + leftCloseParenthesisWidth * 0.5f, 0, 0), isAnimated);
       leftSoFar += leftCloseParenthesisWidth;
     }
 
     // Operator
-    MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, height, 0), isAnimated);
+    MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, 0, 0), isAnimated);
     leftSoFar += operatorWidth;
 
     // (
     if (rightOpen != null) {
-      MoveTo(rightOpen.first, new Vector3(leftSoFar + rightOpenParenthesisWidth * 0.5f, height, 0), isAnimated);
+      MoveTo(rightOpen.first, new Vector3(leftSoFar + rightOpenParenthesisWidth * 0.5f, 0, 0), isAnimated);
       leftSoFar += rightOpenParenthesisWidth;
     }
 
     // Right subexpression
-    MoveTo(ro, new Vector3(leftSoFar + rightBounds.extents.x, height, 0), isAnimated);
+    MoveTo(ro, new Vector3(leftSoFar + rightBounds.extents.x, 0, 0), isAnimated);
     leftSoFar += rightBounds.size.x;
 
     // )
     if (rightClose != null) {
-      MoveTo(rightClose.first, new Vector3(leftSoFar + rightCloseParenthesisWidth * 0.5f, height, 0), isAnimated);
+      MoveTo(rightClose.first, new Vector3(leftSoFar + rightCloseParenthesisWidth * 0.5f, 0, 0), isAnimated);
       leftSoFar += rightCloseParenthesisWidth;
     }
 

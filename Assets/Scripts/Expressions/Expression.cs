@@ -37,8 +37,7 @@ public abstract class Expression {
     return this;
   }
 
-  virtual public void Relayout(float height, bool isAnimated) {
-  }
+  public abstract void Relayout(bool isAnimated);
 
   public abstract bool IsLeaf();
 
@@ -67,7 +66,9 @@ public abstract class Expression {
     int ntypes = 2;
     int type = Random.Range(0, ntypes);
 
-    if (type == 0) {
+    if (false) {
+      return new ExpressionString("dog");
+    } else if (type == 0) {
       return GenerateExpressionInteger(nLevels);
     } else {
       return GenerateExpressionBoolean(nLevels);

@@ -845,7 +845,7 @@ MonoBehaviour:
   font: {fileID: 12800000, guid: 6f8e527ed6ecb46feb7e890cec344650, type: 3}
   piecePrefab: {fileID: 123966, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
   canvas: {fileID: 1405407623}
-  speed: 1
+  speed: 0.2
   triggerThreshold: {fileID: 1226565328}
   guessBox: {fileID: 323792119}
   highlighterPrefab: {fileID: 183238, guid: f7ab0b41816d34653850c2cf494acd7a, type: 2}

@@ -43,17 +43,17 @@ public abstract class ExpressionPrefixUnaryOperator : Expression {
       ro.transform.parent = gameObject.transform;
     }
 
-    Relayout(0.0f, false);
+    Relayout(false);
 
     return gameObject;
   }
 
-  override public void Relayout(float height, bool isAnimated) {
-    right.Relayout(height, isAnimated);
-    ExpressionController.singleton.StartCoroutine(PositionAndFit(height, isAnimated));
+  override public void Relayout(bool isAnimated) {
+    right.Relayout(isAnimated);
+    ExpressionController.singleton.StartCoroutine(PositionAndFit(isAnimated));
   }
 
-  IEnumerator PositionAndFit(float height, bool isAnimated) {
+  IEnumerator PositionAndFit(bool isAnimated) {
     yield return null;
 
     // How wide is the operator?
@@ -79,26 +79,26 @@ public abstract class ExpressionPrefixUnaryOperator : Expression {
     float totalWidth = operatorWidth + rightBounds.size.x + rightOpenParenthesisWidth + rightCloseParenthesisWidth;
 
     // Now let's move everything.
-    MoveTo(gameObject, new Vector3(0, height, 0), isAnimated);
+    MoveTo(gameObject, new Vector3(0, 0, 0), isAnimated);
     float leftSoFar = totalWidth * -0.5f;
 
     // Operator
-    MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, height, 0), isAnimated);
+    MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, 0, 0), isAnimated);
     leftSoFar += operatorWidth;
 
     // (
     if (rightOpen != null) {
-      MoveTo(rightOpen.first, new Vector3(leftSoFar + rightOpenParenthesisWidth * 0.5f, height, 0), isAnimated);
+      MoveTo(rightOpen.first, new Vector3(leftSoFar + rightOpenParenthesisWidth * 0.5f, 0, 0), isAnimated);
       leftSoFar += rightOpenParenthesisWidth;
     }
 
     // Right subexpression
-    MoveTo(ro, new Vector3(leftSoFar + rightBounds.extents.x, height, 0), isAnimated);
+    MoveTo(ro, new Vector3(leftSoFar + rightBounds.extents.x, 0, 0), isAnimated);
     leftSoFar += rightBounds.size.x;
 
     // )
     if (rightClose != null) {
-      MoveTo(rightClose.first, new Vector3(leftSoFar + rightCloseParenthesisWidth * 0.5f, height, 0), isAnimated);
+      MoveTo(rightClose.first, new Vector3(leftSoFar + rightCloseParenthesisWidth * 0.5f, 0, 0), isAnimated);
       leftSoFar += rightCloseParenthesisWidth;
     }
 

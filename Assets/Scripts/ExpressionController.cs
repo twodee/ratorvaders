@@ -25,6 +25,7 @@ public class ExpressionController : MonoBehaviour {
   public AudioClip hitPrecedentClip;
   public AudioClip hitNotPrecedentClip;
   public AudioClip resolvedClip;
+  public int nLevels;
 
   public bool isAnswering {
     get {
@@ -49,10 +50,11 @@ public class ExpressionController : MonoBehaviour {
 
   void GenerateExpression() {
     Regenerate();
-    expr = Expression.GenerateExpression(3);
-    highestPrecedent = expr.GetHighestPrecedentSubexpression();
+    expr = Expression.GenerateExpression(nLevels);
+    DetermineHighestPrecedent();
     GameObject go = expr.GenerateGameObject();
     go.transform.parent = gameObject.transform;
+    go.transform.localPosition = new Vector3(0, 0, 0);
   }
   
   void Update() {
@@ -83,6 +85,7 @@ public class ExpressionController : MonoBehaviour {
     if (piece.parentExpression == highestPrecedent) {
       isRightHit = true;
 
+      /* Debug.Log("piece.parentExpression: " + piece.parentExpression); */
       if (piece.parentExpression.IsLeaf()) {
         Destroy(gameObject);
         GenerateExpression();
@@ -150,16 +153,19 @@ public class ExpressionController : MonoBehaviour {
     Destroy(highlighter);
   }
 
-  public void Resolve() {
-    HideInput();
-
-    expr = expr.Resolve(highestPrecedent);
-    expr.Relayout(expr.gameObject.transform.localPosition.y, true);
-
+  private void DetermineHighestPrecedent() {
     highestPrecedent = expr.GetHighestPrecedentSubexpression();
     if (highestPrecedent == null) {
       highestPrecedent = expr;
     }
+  }
+
+  public void Resolve() {
+    HideInput();
+
+    expr = expr.Resolve(highestPrecedent);
+    expr.Relayout(true);
+    DetermineHighestPrecedent();
 
     audioSource.PlayOneShot(resolvedClip);
     highlighter = null;

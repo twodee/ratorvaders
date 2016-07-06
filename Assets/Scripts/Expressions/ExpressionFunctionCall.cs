@@ -52,19 +52,19 @@ public abstract class ExpressionFunctionCall : Expression {
     close = ExpressionController.GeneratePiece(")");
     close.first.transform.parent = gameObject.transform;
 
-    Relayout(0.0f, false);
+    Relayout(false);
 
     return gameObject;
   }
 
-  override public void Relayout(float height, bool isAnimated) {
+  override public void Relayout(bool isAnimated) {
     foreach (Expression parameterExpression in parameterExpressions) {
-      parameterExpression.Relayout(height, isAnimated);
+      parameterExpression.Relayout(isAnimated);
     }
-    ExpressionController.singleton.StartCoroutine(PositionAndFit(height, isAnimated));
+    ExpressionController.singleton.StartCoroutine(PositionAndFit(isAnimated));
   }
 
-  IEnumerator PositionAndFit(float height, bool isAnimated) {
+  IEnumerator PositionAndFit(bool isAnimated) {
     yield return null;
 
     // How wide is the operator?
@@ -106,29 +106,29 @@ public abstract class ExpressionFunctionCall : Expression {
     totalWidth += commas.Count * commaWidth;
 
     // Now let's move everything.
-    MoveTo(gameObject, new Vector3(0, height, 0), isAnimated);
+    MoveTo(gameObject, new Vector3(0, 0, 0), isAnimated);
     float leftSoFar = totalWidth * -0.5f;
 
     // Identifier
-    MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, height, 0), isAnimated);
+    MoveTo(rator.first, new Vector3(leftSoFar + operatorWidth * 0.5f, 0, 0), isAnimated);
     leftSoFar += operatorWidth;
 
     // (
-    MoveTo(open.first, new Vector3(leftSoFar + openWidth * 0.5f, height, 0), isAnimated);
+    MoveTo(open.first, new Vector3(leftSoFar + openWidth * 0.5f, 0, 0), isAnimated);
     leftSoFar += openWidth;
 
     // Parameter expressions
     for (int i = 0; i < parameterObjects.Count; ++i) {
       if (i > 0) {
-        MoveTo(commas[i - 1].first, new Vector3(leftSoFar + commaWidth * 0.5f, height, 0), isAnimated);
+        MoveTo(commas[i - 1].first, new Vector3(leftSoFar + commaWidth * 0.5f, 0, 0), isAnimated);
         leftSoFar += commaWidth;
       }
-      MoveTo(parameterObjects[i], new Vector3(leftSoFar + bounds[i].extents.x, height, 0), isAnimated);
+      MoveTo(parameterObjects[i], new Vector3(leftSoFar + bounds[i].extents.x, 0, 0), isAnimated);
       leftSoFar += bounds[i].size.x;
     }
 
     // )
-    MoveTo(close.first, new Vector3(leftSoFar + closeWidth * 0.5f, height, 0), isAnimated);
+    MoveTo(close.first, new Vector3(leftSoFar + closeWidth * 0.5f, 0, 0), isAnimated);
     leftSoFar += closeWidth;
 
     Bounds b = new Bounds(Vector3.zero, new Vector3(1, 1, 0));

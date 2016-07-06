@@ -7,15 +7,11 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionBoolean : ExpressionLiteral {
-  private bool i;
+public class ExpressionString : ExpressionLiteral {
+  /* private string i; */
 
-  public ExpressionBoolean(bool i) : base(i ? "t" : "f") {
-    this.i = i;
-  }
-
-  public bool ToBool() {
-    return i;
+  public ExpressionString(string i) : base("\"" + i + "\"") {
+    /* this.i = i; */
   }
 }
 
