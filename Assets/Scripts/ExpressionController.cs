@@ -38,6 +38,8 @@ public class ExpressionController : MonoBehaviour {
   public int minMaxWeight;
   public int stringLengthWeight;
   public int stringToCaseWeight;
+  public int stringContainsWeight;
+  public int stringIsEmptyWeight;
 
   public bool isAnswering {
     get {

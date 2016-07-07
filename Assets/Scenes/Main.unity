@@ -861,11 +861,11 @@ MonoBehaviour:
   relationalWeight: 0
   equalityWeight: 0
   stringConcatWeight: 0
-  stringIndexOfWeight: 0
+  stringIndexOfWeight: 10
   stringCharAtWeight: 0
   minMaxWeight: 0
   stringLengthWeight: 0
-  stringToCaseWeight: 10
+  stringToCaseWeight: 0
 --- !u!82 &1058872007
 AudioSource:
   m_ObjectHideFlags: 0

@@ -6,15 +6,15 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionIndexOf : ExpressionMethodCall {
-  public ExpressionIndexOf(Expression invoker,
-                           Expression c) : base(invoker, new List<Expression>() {c}, "indexOf") {
+public class ExpressionStringEndsWith : ExpressionMethodCall {
+  public ExpressionStringEndsWith(Expression invoker,
+                                  Expression suffix) : base(invoker, new List<Expression>() {suffix}, "endsWith") {
   }
 
   override public Expression Evaluate() {
     string s = ((ExpressionString) invokerExpression.Evaluate()).ToRawString();
-    char c = ((ExpressionChar) parameterExpressions[0].Evaluate()).ToChar();
-    return new ExpressionInteger(s.IndexOf(c));
+    string suffix = ((ExpressionString) parameterExpressions[0].Evaluate()).ToRawString();
+    return new ExpressionBoolean(s.EndsWith(suffix));
   }
 }
 

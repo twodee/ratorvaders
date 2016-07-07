@@ -6,8 +6,8 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionCharAt : ExpressionMethodCall {
-  public ExpressionCharAt(Expression invoker,
+public class ExpressionStringCharAt : ExpressionMethodCall {
+  public ExpressionStringCharAt(Expression invoker,
                           Expression index) : base(invoker, new List<Expression>() {index}, "charAt") {
   }
 
