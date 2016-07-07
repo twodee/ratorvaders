@@ -6,15 +6,13 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionCharAt : ExpressionMethodCall {
-  public ExpressionCharAt(Expression invoker,
-                          Expression index) : base(invoker, new List<Expression>() {index}, "charAt") {
+public class ExpressionStringToLower : ExpressionMethodCall {
+  public ExpressionStringToLower(Expression invoker) : base(invoker, new List<Expression>() {}, "toLower") {
   }
 
   override public Expression Evaluate() {
     string s = ((ExpressionString) invokerExpression.Evaluate()).ToRawString();
-    int i = ((ExpressionInteger) parameterExpressions[0].Evaluate()).ToInt();
-    return new ExpressionChar(s[i]);
+    return new ExpressionString(s.ToLower());
   }
 }
 

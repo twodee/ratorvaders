@@ -8,7 +8,7 @@ namespace RatorVaders {
 
 public class ExpressionIndexOf : ExpressionMethodCall {
   public ExpressionIndexOf(Expression invoker,
-                           List<Expression> parameters) : base(invoker, parameters, "indexOf") {
+                           Expression c) : base(invoker, new List<Expression>() {c}, "indexOf") {
   }
 
   override public Expression Evaluate() {

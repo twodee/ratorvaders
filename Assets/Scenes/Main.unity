@@ -845,7 +845,7 @@ MonoBehaviour:
   font: {fileID: 12800000, guid: 6f8e527ed6ecb46feb7e890cec344650, type: 3}
   piecePrefab: {fileID: 123966, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
   canvas: {fileID: 1405407623}
-  speed: 0.2
+  speed: 0.1
   triggerThreshold: {fileID: 1226565328}
   guessBox: {fileID: 323792119}
   highlighterPrefab: {fileID: 183238, guid: f7ab0b41816d34653850c2cf494acd7a, type: 2}
@@ -855,15 +855,17 @@ MonoBehaviour:
   hitNotPrecedentClip: {fileID: 8300000, guid: 0516457a508ef448eaf1ad3d878c469c, type: 3}
   resolvedClip: {fileID: 8300000, guid: 10d5f01aeda0848ac861e00f829bb93a, type: 3}
   nLevels: 3
-  additiveWeight: 1
+  additiveWeight: 0
   multiplicativeWeight: 0
   logicalWeight: 0
   relationalWeight: 0
   equalityWeight: 0
-  concatWeight: 0
-  indexOfWeight: 0
-  charAtWeight: 0
-  minMaxWeight: 100
+  stringConcatWeight: 0
+  stringIndexOfWeight: 0
+  stringCharAtWeight: 0
+  minMaxWeight: 0
+  stringLengthWeight: 0
+  stringToCaseWeight: 10
 --- !u!82 &1058872007
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1075,7 +1077,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 414082, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -3.169942
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 414082, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
       propertyPath: m_LocalPosition.z
@@ -1102,20 +1104,16 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 123966, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
-      propertyPath: m_Name
-      value: Piece
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22452704, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 167
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 22452704, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 68
-      objectReference: {fileID: 0}
-    - target: {fileID: 123966, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}
-      propertyPath: m_IsActive
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a91ea3c973266432fa0137ec7e62e776, type: 2}

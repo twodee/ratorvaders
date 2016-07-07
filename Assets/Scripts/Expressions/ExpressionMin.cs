@@ -7,7 +7,7 @@ namespace RatorVaders {
 /* ------------------------------------------------------------------------- */
 
 public class ExpressionMin : ExpressionFunctionCall {
-  public ExpressionMin(List<Expression> parameters) : base(parameters, "min") {
+  public ExpressionMin(Expression a, Expression b) : base(new List<Expression>() {a, b}, "min") {
   }
 
   override public Expression Evaluate() {

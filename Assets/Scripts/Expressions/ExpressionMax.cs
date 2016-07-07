@@ -7,7 +7,7 @@ namespace RatorVaders {
 /* ------------------------------------------------------------------------- */
 
 public class ExpressionMax : ExpressionFunctionCall {
-  public ExpressionMax(List<Expression> parameters) : base(parameters, "max") {
+  public ExpressionMax(Expression a, Expression b) : base(new List<Expression>() {a, b}, "max") {
   }
 
   override public Expression Evaluate() {

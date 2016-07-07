@@ -81,6 +81,7 @@ public abstract class ExpressionMethodCall : Expression {
   }
 
   override public void Relayout(bool isAnimated) {
+    invokerExpression.Relayout(isAnimated);
     foreach (Expression parameterExpression in parameterExpressions) {
       parameterExpression.Relayout(isAnimated);
     }
@@ -278,6 +279,7 @@ public abstract class ExpressionMethodCall : Expression {
       GameObject.Destroy(this.gameObject);
       return replacementExpr;
     } else {
+      invokerExpression = invokerExpression.Resolve(toResolve);
       for (int i = 0; i < parameterExpressions.Count; ++i) {
         parameterExpressions[i] = parameterExpressions[i].Resolve(toResolve);
       }

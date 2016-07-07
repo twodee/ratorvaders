@@ -10,16 +10,6 @@ public abstract class Expression {
   private Precedence _precedence;
   public GameObject gameObject;
 
-  public static int additiveWeight = ExpressionController.singleton.additiveWeight;
-  public static int multiplicativeWeight = ExpressionController.singleton.multiplicativeWeight;
-  public static int logicalWeight = ExpressionController.singleton.logicalWeight;
-  public static int relationalWeight = ExpressionController.singleton.relationalWeight;
-  public static int equalityWeight = ExpressionController.singleton.equalityWeight;
-  public static int concatWeight = ExpressionController.singleton.concatWeight;
-  public static int indexOfWeight = ExpressionController.singleton.indexOfWeight;
-  public static int charAtWeight = ExpressionController.singleton.charAtWeight;
-  public static int minMaxWeight = ExpressionController.singleton.minMaxWeight;
-
   public Precedence precedence {
     set {
       _precedence = value;
@@ -73,9 +63,12 @@ public abstract class Expression {
   }
 
   public static Expression GenerateExpression(int nLevels) {
-    int integerWeight = additiveWeight + multiplicativeWeight + indexOfWeight + minMaxWeight;
-    int booleanWeight = logicalWeight + relationalWeight + equalityWeight;
-    int stringWeight = concatWeight;
+    /* return new ExpressionIndexOf(new ExpressionConcat(new ExpressionString("cat"), new ExpressionAnd(new ExpressionBoolean(true), new ExpressionBoolean(false))), */
+                                 /* new ExpressionChar('h')); */
+
+    int integerWeight = ExpressionController.singleton.additiveWeight + ExpressionController.singleton.multiplicativeWeight + ExpressionController.singleton.stringIndexOfWeight + ExpressionController.singleton.minMaxWeight + ExpressionController.singleton.stringLengthWeight;
+    int booleanWeight = ExpressionController.singleton.logicalWeight + ExpressionController.singleton.relationalWeight + ExpressionController.singleton.equalityWeight;
+    int stringWeight = ExpressionController.singleton.stringConcatWeight + ExpressionController.singleton.stringToCaseWeight;
     int totalWeight = integerWeight + booleanWeight + stringWeight;
 
     int w = Random.Range(0, totalWeight);
@@ -91,15 +84,14 @@ public abstract class Expression {
 
   public static Expression GenerateExpressionInteger(int nLevels) {
     if (nLevels <= 0) {
-      int i = Random.Range(1, 10);
-      return new ExpressionInteger(i);
+      return GenerateExpressionIntegerLiteral();
     } else {
-      int totalWeight = additiveWeight + multiplicativeWeight + indexOfWeight + minMaxWeight;
+      int totalWeight = ExpressionController.singleton.additiveWeight + ExpressionController.singleton.multiplicativeWeight + ExpressionController.singleton.stringIndexOfWeight + ExpressionController.singleton.minMaxWeight + ExpressionController.singleton.stringLengthWeight;
       int w = Random.Range(0, totalWeight);
       int nLevelsLeft = Random.Range(0, nLevels);
       int nLevelsRight = Random.Range(0, nLevels);
 
-      if (w < additiveWeight) {
+      if (w < ExpressionController.singleton.additiveWeight) {
         int operation = Random.Range(0, 2);
         if (operation == 0) {
           return new ExpressionAdd(GenerateExpressionInteger(nLevelsLeft),
@@ -108,7 +100,7 @@ public abstract class Expression {
           return new ExpressionSubtract(GenerateExpressionInteger(nLevelsLeft),
                                         GenerateExpressionInteger(nLevelsRight));  
         }
-      } else if (w < additiveWeight + multiplicativeWeight) {
+      } else if (w < ExpressionController.singleton.additiveWeight + ExpressionController.singleton.multiplicativeWeight) {
         int operation = Random.Range(0, 3);
         if (operation == 0) {
           return new ExpressionMultiply(GenerateExpressionInteger(nLevelsLeft),
@@ -120,38 +112,38 @@ public abstract class Expression {
           return new ExpressionMod(GenerateExpressionInteger(nLevelsLeft),
                                    GenerateExpressionInteger(nLevelsRight));  
         }
-      } else if (w < additiveWeight + multiplicativeWeight + indexOfWeight) {
-        List<Expression> parameters = new List<Expression>();
-        parameters.Add(GenerateExpressionChar(nLevelsRight));
-        return new ExpressionIndexOf(GenerateExpressionString(nLevelsLeft), parameters);
-      } else {
+      } else if (w < ExpressionController.singleton.additiveWeight + ExpressionController.singleton.multiplicativeWeight + ExpressionController.singleton.stringIndexOfWeight) {
+        return new ExpressionIndexOf(GenerateExpressionString(nLevelsLeft), GenerateExpressionChar(nLevelsRight - 1));
+      } else if (w < ExpressionController.singleton.additiveWeight + ExpressionController.singleton.multiplicativeWeight + ExpressionController.singleton.stringIndexOfWeight + ExpressionController.singleton.minMaxWeight) {
         int operation = Random.Range(0, 2);
         if (operation == 0) {
-          List<Expression> parameters = new List<Expression>();
-          parameters.Add(GenerateExpressionInteger(nLevelsLeft));
-          parameters.Add(GenerateExpressionInteger(nLevelsRight));
-          return new ExpressionMax(parameters);
+          return new ExpressionMax(GenerateExpressionInteger(nLevelsLeft - 1), GenerateExpressionInteger(nLevelsRight - 1));
         } else {
-          List<Expression> parameters = new List<Expression>();
-          parameters.Add(GenerateExpressionInteger(nLevelsLeft));
-          parameters.Add(GenerateExpressionInteger(nLevelsRight));
-          return new ExpressionMin(parameters);
+          return new ExpressionMin(GenerateExpressionInteger(nLevelsLeft - 1), GenerateExpressionInteger(nLevelsRight - 1));
         }
+      } else if (w < ExpressionController.singleton.additiveWeight + ExpressionController.singleton.multiplicativeWeight + ExpressionController.singleton.stringIndexOfWeight + ExpressionController.singleton.minMaxWeight + ExpressionController.singleton.stringLengthWeight) {
+        return new ExpressionStringLength(GenerateExpressionString(nLevelsLeft));
+      } else {
+        return GenerateExpressionIntegerLiteral();
       }
     }
   }
 
+  public static Expression GenerateExpressionIntegerLiteral() {
+    int i = Random.Range(1, 10);
+    return new ExpressionInteger(i);
+  }
+
   public static Expression GenerateExpressionBoolean(int nLevels) {
     if (nLevels <= 0) {
-      bool b = Random.Range(0, 2) == 0 ? false : true;
-      return new ExpressionBoolean(b);
+      return GenerateExpressionBooleanLiteral();
     } else {
-      int totalWeight = logicalWeight + relationalWeight + equalityWeight;
+      int totalWeight = ExpressionController.singleton.logicalWeight + ExpressionController.singleton.relationalWeight + ExpressionController.singleton.equalityWeight;
       int w = Random.Range(0, totalWeight);
       int nLevelsLeft = Random.Range(0, nLevels);
       int nLevelsRight = Random.Range(0, nLevels);
 
-      if (w < logicalWeight) {
+      if (w < ExpressionController.singleton.logicalWeight) {
         int operation = Random.Range(0, 3);
         if (operation == 0) {
           return new ExpressionAnd(GenerateExpressionBoolean(nLevelsLeft),
@@ -162,7 +154,7 @@ public abstract class Expression {
         } else {
           return new ExpressionNot(GenerateExpressionBoolean(nLevelsRight));  
         }
-      } else if (w < logicalWeight + relationalWeight) {
+      } else if (w < ExpressionController.singleton.logicalWeight + ExpressionController.singleton.relationalWeight) {
         int operation = Random.Range(0, 4);
         if (operation == 0) {
           return new ExpressionGreaterThan(GenerateExpressionInteger(nLevelsLeft),
@@ -177,7 +169,7 @@ public abstract class Expression {
           return new ExpressionLessThanOrEqualTo(GenerateExpressionInteger(nLevelsLeft),
                                                  GenerateExpressionInteger(nLevelsRight));  
         }
-      } else {
+      } else if (w < ExpressionController.singleton.logicalWeight + ExpressionController.singleton.relationalWeight + ExpressionController.singleton.equalityWeight) {
         int operation = Random.Range(0, 2);
         if (operation == 0) {
           return new ExpressionEqual(GenerateExpressionInteger(nLevelsLeft),
@@ -186,22 +178,27 @@ public abstract class Expression {
           return new ExpressionNotEqual(GenerateExpressionInteger(nLevelsLeft),
                                         GenerateExpressionInteger(nLevelsRight));  
         }
+      } else {
+        return GenerateExpressionBooleanLiteral();
       }
     }
   }
 
+  public static Expression GenerateExpressionBooleanLiteral() {
+    bool b = Random.Range(0, 2) == 0 ? false : true;
+    return new ExpressionBoolean(b);
+  }
+
   public static Expression GenerateExpressionString(int nLevels) {
     if (nLevels <= 0) {
-      string[] words = {"dog", "cat", "zebra", "fish", "seven", "Bean"};
-      int i = Random.Range(0, words.Length);
-      return new ExpressionString(words[i]);
+      return GenerateExpressionStringLiteral();
     } else {
-      int totalWeight = concatWeight;
+      int totalWeight = ExpressionController.singleton.stringConcatWeight + ExpressionController.singleton.stringToCaseWeight;
       int w = Random.Range(0, totalWeight);
       int nLevelsLeft = Random.Range(0, nLevels);
       int nLevelsRight = Random.Range(0, nLevels);
 
-      if (true || w < concatWeight) {
+      if (w < ExpressionController.singleton.stringConcatWeight) {
         Expression l, r;
         int whichIsString = Random.Range(0, 2);
         if (whichIsString == 0) {
@@ -212,11 +209,44 @@ public abstract class Expression {
           r = GenerateExpression(nLevelsRight);
         }
         return new ExpressionConcat(l, r);
+      } else if (w < ExpressionController.singleton.stringConcatWeight + ExpressionController.singleton.stringToCaseWeight) {
+        Expression s = GenerateExpressionString(nLevelsLeft);
+        int operation = Random.Range(0, 2);
+        if (operation == 0) {
+          return new ExpressionStringToUpper(s);
+        } else {
+          return new ExpressionStringToLower(s);
+        }
+      } else {
+        return GenerateExpressionStringLiteral();
       }
     }
   }
 
+  public static Expression GenerateExpressionStringLiteral() {
+    string[] words = {"dog", "cat", "zebra", "fish", "seven", "Bean"};
+    int i = Random.Range(0, words.Length);
+    return new ExpressionString(words[i]);
+  }
+
   public static Expression GenerateExpressionChar(int nLevels) {
+    if (nLevels <= 0) {
+      return GenerateCharLiteral();
+    } else {
+      int totalWeight = ExpressionController.singleton.stringCharAtWeight;
+      int w = Random.Range(0, totalWeight);
+      int nLevelsLeft = Random.Range(0, nLevels);
+      int nLevelsRight = Random.Range(0, nLevels - 1);
+
+      if (w < ExpressionController.singleton.stringCharAtWeight) {
+        return new ExpressionCharAt(GenerateExpressionString(nLevelsLeft), GenerateExpressionInteger(nLevelsRight));
+      } else {
+        return GenerateCharLiteral();
+      }
+    }
+  }
+
+  public static Expression GenerateCharLiteral() {
     string chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+:<>[]{}(),./?\\|~";
     int i = Random.Range(0, chars.Length);
     return new ExpressionChar(chars[i]);

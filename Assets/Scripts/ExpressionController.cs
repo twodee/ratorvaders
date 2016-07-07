@@ -32,10 +32,12 @@ public class ExpressionController : MonoBehaviour {
   public int logicalWeight;
   public int relationalWeight;
   public int equalityWeight;
-  public int concatWeight;
-  public int indexOfWeight;
-  public int charAtWeight;
+  public int stringConcatWeight;
+  public int stringIndexOfWeight;
+  public int stringCharAtWeight;
   public int minMaxWeight;
+  public int stringLengthWeight;
+  public int stringToCaseWeight;
 
   public bool isAnswering {
     get {
@@ -69,6 +71,11 @@ public class ExpressionController : MonoBehaviour {
   
   void Update() {
     transform.position += Vector3.up * -speed * Time.deltaTime;
+
+    if (Input.GetKeyUp("left ctrl")) {
+      Destroy(expr.gameObject);
+      GenerateExpression();
+    }
   }
 
   public void Regenerate() {
@@ -137,8 +144,8 @@ public class ExpressionController : MonoBehaviour {
 
     ExpressionBoolean exprBoolean = answer as ExpressionBoolean;
     if (exprBoolean != null) {
-      isParseable = guessBox.text == "t" || guessBox.text == "f";
-      bool guess = guessBox.text == "t" ? true : false;
+      isParseable = guessBox.text == "true" || guessBox.text == "false";
+      bool guess = guessBox.text == "true" ? true : false;
       isCorrect = guess == exprBoolean.ToBool();
     } else {
       ExpressionInteger exprInteger = answer as ExpressionInteger;
@@ -160,9 +167,6 @@ public class ExpressionController : MonoBehaviour {
         }
       }
     }
-
-    Debug.Log("isParseable: " + isParseable);
-    Debug.Log("isCorrect: " + isCorrect);
 
     if (isParseable && isCorrect) {
       Resolve(); 

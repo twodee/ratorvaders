@@ -10,7 +10,7 @@ namespace RatorVaders {
 public class ExpressionBoolean : ExpressionLiteral {
   private bool i;
 
-  public ExpressionBoolean(bool i) : base(i ? "t" : "f") {
+  public ExpressionBoolean(bool i) : base(i ? "true" : "false") {
     this.i = i;
   }
 
