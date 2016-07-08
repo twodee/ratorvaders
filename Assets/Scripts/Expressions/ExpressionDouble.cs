@@ -7,15 +7,19 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionFloat : ExpressionNumber {
+public class ExpressionDouble : ExpressionNumber {
   private float i;
 
-  public ExpressionFloat(float i) : base(string.Format("{0:F1}", i)) {
+  public ExpressionDouble(float i) : base(string.Format("{0:F1}", i)) {
     this.i = i;
   }
 
-  override public float ToFloat() {
+  override public float ToDouble() {
     return i;
+  }
+
+  override public int ToInt() {
+    return (int) i;
   }
 
   override public string ToString() {

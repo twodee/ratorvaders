@@ -14,11 +14,11 @@ public class ExpressionInteger : ExpressionNumber {
     this.i = i;
   }
 
-  public int ToInt() {
+  override public int ToInt() {
     return i;
   }
 
-  override public float ToFloat() {
+  override public float ToDouble() {
     return i;
   }
 }

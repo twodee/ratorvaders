@@ -6,13 +6,13 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionFloatFloor : ExpressionFunctionCall {
-  public ExpressionFloatFloor(Expression e) : base(new List<Expression>() {e}, "floor") {
+public class ExpressionDoubleCeil : ExpressionFunctionCall {
+  public ExpressionDoubleCeil(Expression e) : base(new List<Expression>() {e}, "ceil") {
   }
 
   override public Expression Evaluate() {
-    float a = Mathf.Floor(((ExpressionFloat) parameterExpressions[0].Evaluate()).ToFloat());
-    return new ExpressionFloat(a);
+    float a = Mathf.Ceil(((ExpressionDouble) parameterExpressions[0].Evaluate()).ToDouble());
+    return new ExpressionDouble(a);
   }
 }
 

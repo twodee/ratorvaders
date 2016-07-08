@@ -11,7 +11,8 @@ public abstract class ExpressionNumber : ExpressionLiteral {
   public ExpressionNumber(string label) : base(label) {
   }
 
-  public abstract float ToFloat();
+  public abstract float ToDouble();
+  public abstract int ToInt();
 }
 
 /* ------------------------------------------------------------------------- */

@@ -9,6 +9,7 @@ public class Precedence {
   public static Precedence ADDITIVE = new Precedence(15, Association.LEFT);
   public static Precedence MULTIPLICATIVE = new Precedence(20, Association.LEFT);
   public static Precedence NOT = new Precedence(50, Association.LEFT);
+  public static Precedence CAST = new Precedence(60, Association.LEFT);
   public static Precedence FUNCTION_CALL = new Precedence(70, Association.LEFT);
   public static Precedence LITERAL = new Precedence(100, Association.LEFT);
 
