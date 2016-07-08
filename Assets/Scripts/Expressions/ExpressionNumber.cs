@@ -7,20 +7,11 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionInteger : ExpressionNumber {
-  private int i;
-
-  public ExpressionInteger(int i) : base("" + i) {
-    this.i = i;
+public abstract class ExpressionNumber : ExpressionLiteral {
+  public ExpressionNumber(string label) : base(label) {
   }
 
-  public int ToInt() {
-    return i;
-  }
-
-  override public float ToFloat() {
-    return i;
-  }
+  public abstract float ToFloat();
 }
 
 /* ------------------------------------------------------------------------- */

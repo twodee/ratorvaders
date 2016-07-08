@@ -40,6 +40,10 @@ public class ExpressionController : MonoBehaviour {
   public int stringToCaseWeight;
   public int stringContainsWeight;
   public int stringIsEmptyWeight;
+  public int floatCeilFloorWeight;
+  public int stringSubstring1Weight;
+  public int stringSubstring2Weight;
+  public int floatAdditiveWeight;
 
   public bool isAnswering {
     get {
@@ -165,6 +169,13 @@ public class ExpressionController : MonoBehaviour {
           if (exprChar != null) {
             isParseable = guessBox.text.Length == 1;
             isCorrect = guessBox.text[0] == exprChar.ToChar();
+          } else {
+            ExpressionFloat exprFloat = answer as ExpressionFloat;
+            if (exprFloat != null) {
+              float guess;
+              isParseable = float.TryParse(guessBox.text, out guess) && guessBox.text.IndexOf('.') >= 0;
+              isCorrect = Mathf.Abs(guess - exprFloat.ToFloat()) < 1.0e-3f;
+            }
           }
         }
       }

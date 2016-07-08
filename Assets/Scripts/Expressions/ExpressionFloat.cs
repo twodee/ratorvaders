@@ -7,19 +7,19 @@ namespace RatorVaders {
 
 /* ------------------------------------------------------------------------- */
 
-public class ExpressionInteger : ExpressionNumber {
-  private int i;
+public class ExpressionFloat : ExpressionNumber {
+  private float i;
 
-  public ExpressionInteger(int i) : base("" + i) {
+  public ExpressionFloat(float i) : base(string.Format("{0:F1}", i)) {
     this.i = i;
-  }
-
-  public int ToInt() {
-    return i;
   }
 
   override public float ToFloat() {
     return i;
+  }
+
+  override public string ToString() {
+    return string.Format("{0:F1}", i);
   }
 }
 
