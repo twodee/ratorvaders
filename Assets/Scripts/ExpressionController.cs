@@ -13,6 +13,7 @@ public class ExpressionController : MonoBehaviour {
   public PlayerController player;
   public Font font;
   public GameObject piecePrefab;
+  public Color green;
   public GameObject canvas;
   public float speed = 1.0f;
   public Expression highestPrecedent;
@@ -52,9 +53,13 @@ public class ExpressionController : MonoBehaviour {
       return guessBox.gameObject.activeInHierarchy;
     }
   }
+
+  void Awake() {
+    singleton = this;
+    green = piecePrefab.transform.Find("Canvas/Text").gameObject.GetComponent<Text>().color;
+  }
   
   void Start() {
-    singleton = this;
     piece = piecePrefab;
     audioSource = GetComponent<AudioSource>();
 
@@ -64,6 +69,8 @@ public class ExpressionController : MonoBehaviour {
     
     // Expand guess to fill screen. I can't do this with anchors because the shake animation won't work then.
     guessBox.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Camera.main.pixelWidth);
+
+    guessBox.GetComponent<Image>().color = green;
  
     GenerateExpression();
   }
@@ -110,7 +117,6 @@ public class ExpressionController : MonoBehaviour {
     if (piece.parentExpression == highestPrecedent) {
       isRightHit = true;
 
-      /* Debug.Log("piece.parentExpression: " + piece.parentExpression); */
       if (piece.parentExpression.IsLeaf()) {
         Destroy(gameObject);
         GenerateExpression();
@@ -122,6 +128,11 @@ public class ExpressionController : MonoBehaviour {
         highlighter.transform.localScale = new Vector3(b.size.x, b.size.y, 1);
         highlighter.transform.parent = highestPrecedent.gameObject.transform;
         highlighter.GetComponent<SpriteRenderer>().color = guessBox.GetComponent<Image>().color;
+
+        /* highestPrecedent.Highlight(); */
+        foreach (Text text in highestPrecedent.gameObject.GetComponentsInChildren<Text>()) {
+          text.color = Color.black;
+        }
 
         // Sometimes a stray bullet can hit after the player is dead. No input
         // in such a case.

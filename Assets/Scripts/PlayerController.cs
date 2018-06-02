@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
   public bool isDead;
   public GameObject ammo;
   public GameObject avatar;
+  public GameObject settingsPanel;
 
   private float radius;
 
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour {
   void Update() {
     if (isDead) return;
 
-    if (!ExpressionController.singleton.isAnswering) {
+    if (!ExpressionController.singleton.isAnswering && !settingsPanel.activeInHierarchy) {
       // Move player left or right based on user input.
       float h = Input.GetAxis("Horizontal");
       Vector3 position = transform.position;
@@ -45,6 +46,10 @@ public class PlayerController : MonoBehaviour {
         projectileInstance.transform.parent = projectiles;
         ammo.SetActive(false);
       }
+    }
+
+    if (Input.GetKeyUp("escape")) {
+      settingsPanel.SetActive(!settingsPanel.activeInHierarchy);
     }
   }
 

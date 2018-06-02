@@ -67,7 +67,8 @@ public abstract class Expression {
     int booleanWeight = ExpressionController.singleton.logicalWeight + ExpressionController.singleton.relationalWeight + ExpressionController.singleton.equalityWeight + ExpressionController.singleton.stringContainsWeight + ExpressionController.singleton.stringIsEmptyWeight;
     int stringWeight = ExpressionController.singleton.stringConcatWeight + ExpressionController.singleton.stringToCaseWeight + ExpressionController.singleton.stringSubstring1Weight + ExpressionController.singleton.stringSubstring2Weight;
     int doubleWeight = ExpressionController.singleton.doubleCeilFloorWeight + ExpressionController.singleton.doubleAdditiveWeight + ExpressionController.singleton.doubleCastWeight;
-    int totalWeight = integerWeight + booleanWeight + stringWeight + doubleWeight;
+    int charWeight = ExpressionController.singleton.stringCharAtWeight;
+    int totalWeight = integerWeight + booleanWeight + stringWeight + doubleWeight + charWeight;
 
     int w = Random.Range(0, totalWeight);
 
@@ -77,8 +78,10 @@ public abstract class Expression {
       return GenerateExpressionString(nLevels);
     } else if (w < integerWeight + stringWeight + booleanWeight) {
       return GenerateExpressionBoolean(nLevels);
-    } else {
+    } else if (w < integerWeight + stringWeight + booleanWeight + doubleWeight) {
       return GenerateExpressionDouble(nLevels);
+    } else {
+      return GenerateExpressionChar(nLevels);
     }
   }
 
@@ -238,12 +241,12 @@ public abstract class Expression {
         } else {
           return new ExpressionStringToLower(s);
         }
-      } else if (w < ExpressionController.singleton.stringCharAtWeight + ExpressionController.singleton.stringSubstring1Weight) {
+      } else if (w < ExpressionController.singleton.stringConcatWeight + ExpressionController.singleton.stringToCaseWeight + ExpressionController.singleton.stringSubstring1Weight) {
         Expression stringExpression = GenerateExpressionString(nLevelsLeft);
         string stringValue = ((ExpressionString) stringExpression.Evaluate()).ToRawString();
         int index = Random.Range(0, stringValue.Length + 1);
         return new ExpressionStringSubstring1(stringExpression, new ExpressionInteger(index));
-      } else if (w < ExpressionController.singleton.stringCharAtWeight + ExpressionController.singleton.stringSubstring1Weight + ExpressionController.singleton.stringSubstring2Weight) {
+      } else if (w < ExpressionController.singleton.stringConcatWeight + ExpressionController.singleton.stringToCaseWeight + ExpressionController.singleton.stringSubstring1Weight + ExpressionController.singleton.stringSubstring2Weight) {
         Expression stringExpression = GenerateExpressionString(nLevelsLeft);
         string stringValue = ((ExpressionString) stringExpression.Evaluate()).ToRawString();
         int startIndex = Random.Range(0, stringValue.Length);
